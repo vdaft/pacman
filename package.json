@@ -1,0 +1,15 @@
+{
+  "name": "pacman-engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3",
+    "vite": "^7.2.2"
+  },
+  "private": true
+}
