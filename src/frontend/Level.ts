@@ -11,6 +11,10 @@ export class Level {
         return this._objects;
     }
 
+    getGameObjectAt(x: number, y: number): GameObject | undefined {
+        return this.objects.find(o => o.position.x === x && o.position.y === y);
+    }
+
     addObject(obj: GameObject) {
         if (obj.position.x > this.maxSize.x || obj.position.y > this.maxSize.y) return;
 

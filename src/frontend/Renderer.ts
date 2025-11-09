@@ -12,10 +12,17 @@ export class Renderer {
 
     render(level: Level) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.fillStyle = "#000";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (const gameObject of level.objects) {
-            this.ctx.drawImage(gameObject.texture, gameObject.position.x * Game.TILE_SIZE, gameObject.position.y * Game.TILE_SIZE);
+            this.ctx.drawImage(gameObject.texture,
+                gameObject.position.x * Game.TILE_SIZE
+                + gameObject.renderOffset.x * Game.TILE_SIZE,
+                gameObject.position.y * Game.TILE_SIZE
+                + gameObject.renderOffset.y * Game.TILE_SIZE
+            );
         }
     }
 }

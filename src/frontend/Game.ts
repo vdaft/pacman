@@ -20,8 +20,24 @@ export class Game {
         this.renderer = new Renderer(ctx);
         this.level.maxSize = Game.LEVEL_SIZE;
 
-        this.level.addObject(new Pacman({x: 5, y: 5}))
+        const pacman = new Pacman({x: 5, y: 5})
+
+        this.level.addObject(pacman)
         this.level.addObject(new Wall({x: 5, y: 8}))
+        this.level.addObject(new Wall({x: 5, y: 2}))
+
+
+        document.addEventListener("keydown", (e: KeyboardEvent) => {
+            if (e.key === "ArrowUp") {
+                pacman.bufferedDirection = {x: 0, y: -1}
+            } else if (e.key === "ArrowDown") {
+                pacman.bufferedDirection = {x: 0, y: 1}
+            } else if (e.key === "ArrowRight") {
+                pacman.bufferedDirection = {x: 1, y: 0}
+            } else if (e.key === "ArrowLeft") {
+                pacman.bufferedDirection = {x: -1, y: 0}
+            }
+        })
     }
 
     loop() {
@@ -43,7 +59,11 @@ export class Game {
         requestAnimationFrame(this.loop.bind(this));
     }
 
-    update(delta: number) {}
+    update(delta: number) {
+        for (const gameObject of this.level.objects) {
+            gameObject.update(delta, this.level);
+        }
+    }
     render() {
         this.renderer.render(this.level)
     }
