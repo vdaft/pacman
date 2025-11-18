@@ -48,7 +48,11 @@ export class Pacman extends GameObject {
         ) {
             this.position.x += this.direction.x;
             this.position.y += this.direction.y;
+
+
             this.direction = this.bufferedDirection;
+
+
             this.timeUntilNextMove = 1- this.timeUntilNextMove;
         }
 
@@ -58,12 +62,19 @@ export class Pacman extends GameObject {
             this.position.x += this.direction.x;
             this.position.y += this.direction.y;
 
-            this.direction = this.bufferedDirection;
+            if (!(() => {
+                const gameObject = level.getGameObjectAt(this.position.x + this.bufferedDirection.x, this.position.y + this.bufferedDirection.y)
+
+                if (gameObject instanceof Pacman) return false;
+                return gameObject;
+            })()) {
+                this.direction = this.bufferedDirection;
+            }
 
             this.timeUntilNextMove = 1;
         }
 
-        this.timeUntilNextMove -= delta * 2;
+        this.timeUntilNextMove -= delta * 4;
 
 
         this.renderOffset.x = (this.direction.x) * (1 - this.timeUntilNextMove)

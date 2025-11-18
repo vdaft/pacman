@@ -2,29 +2,30 @@ import {Renderer} from "./Renderer";
 import {Level} from "./Level";
 import {Vector2Like} from "./types";
 import {Pacman} from "./gameobjects/Pacman";
-import {Wall} from "./gameobjects/Wall";
 
 let lastTime = performance.now();
 let delta = 0
 
 export class Game {
-    static TILE_SIZE = 100;
-    static LEVEL_SIZE: Vector2Like = {x: 9, y: 16}
+    static TILE_SIZE = 50;
+    static LEVEL_SIZE: Vector2Like = {x: 9 * 2, y: 16 * 2}
 
     fps: number = 60;
     private renderer: Renderer;
     private running: boolean = false;
-    level = new Level();
+    level!: Level;
 
     constructor(public ctx: CanvasRenderingContext2D) {
         this.renderer = new Renderer(ctx);
-        this.level.maxSize = Game.LEVEL_SIZE;
+    }
+
+    async init() {
+        const res = await fetch("api/levels/level")
+        const data = await res.json()
+        this.level = Level.parseFromJson(data, Game.LEVEL_SIZE)
 
         const pacman = new Pacman({x: 5, y: 5})
-
         this.level.addObject(pacman)
-        this.level.addObject(new Wall({x: 5, y: 8}))
-        this.level.addObject(new Wall({x: 5, y: 2}))
 
 
         document.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -44,7 +45,7 @@ export class Game {
         if (!this.running) return;
 
         const currentTime = performance.now();
-        delta += (currentTime - lastTime)/1000;
+        delta += (currentTime - lastTime) / 1000;
         lastTime = currentTime
 
         const seconds_for_frame = 1 / this.fps;
@@ -64,6 +65,7 @@ export class Game {
             gameObject.update(delta, this.level);
         }
     }
+
     render() {
         this.renderer.render(this.level)
     }
@@ -76,6 +78,7 @@ export class Game {
             requestAnimationFrame(this.loop.bind(this));
         }
     }
+
     stop(): void {
         if (this.running) {
             this.running = false;
