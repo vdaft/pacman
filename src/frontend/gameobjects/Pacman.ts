@@ -8,7 +8,7 @@ export class Pacman extends GameObject {
     direction: Vector2Like = {x: 0, y: 1};
     bufferedDirection: Vector2Like = {x: 0, y: 1};
 
-    protected createTexture(): CanvasRenderingContext2D {
+    createTexture(): CanvasRenderingContext2D {
         const canvas = document.createElement('canvas');
 
         canvas.width = Game.TILE_SIZE;
@@ -33,8 +33,6 @@ export class Pacman extends GameObject {
         })()
 
         if (isBlocked) {
-            console.log(isBlocked);
-
             this.renderOffset.x = 0;
             this.renderOffset.y = 0;
             this.direction = this.bufferedDirection

@@ -2,6 +2,7 @@ import {Renderer} from "./Renderer";
 import {Level} from "./Level";
 import {Vector2Like} from "./types";
 import {Pacman} from "./gameobjects/Pacman";
+import {Ghost} from "./gameobjects/Ghost";
 
 let lastTime = performance.now();
 let delta = 0
@@ -26,6 +27,9 @@ export class Game {
 
         const pacman = new Pacman({x: 5, y: 5})
         this.level.addObject(pacman)
+
+        const ghost = new Ghost({x: 5, y: 5})
+        this.level.addObject(ghost)
 
 
         document.addEventListener("keydown", (e: KeyboardEvent) => {

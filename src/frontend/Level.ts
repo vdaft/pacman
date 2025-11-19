@@ -1,10 +1,9 @@
 import {Vector2Like} from "./types";
 import {GameObject} from "./gameobjects/GameObject";
 import {Wall} from "./gameobjects/Wall";
+import {LevelData} from "../shared/types";
 
-export type LevelData = {
-    layout: string[]
-}
+
 
 export class Level {
     private _objects: GameObject[] = [];
@@ -30,17 +29,22 @@ export class Level {
         const ret = new Level();
         ret.maxSize = size;
 
-        const layout = json.layout;
+        const {layout, key} = json;
 
 
         for (let y = 0; y < layout.length; y++) {
             for (let x = 0; x < layout[y].length; x++) {
-                switch (layout[y][x]) {
-                    case "#":
-                        ret.addObject(new Wall({x, y}));
-                        break;
-                    default:
-                        break;
+                const char = layout[y][x];
+
+                if (key[char] !== undefined) {
+                    switch (key[char].type) {
+                        case "wall":
+                            const obj = new Wall({x, y}, key[char].args.color)
+                            obj.updateTexture()
+
+                            ret.addObject(obj)
+                            console.log("wall created", key[char].args.color);
+                    }
                 }
             }
         }

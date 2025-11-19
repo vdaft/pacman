@@ -4,7 +4,7 @@ import {Level} from "../Level";
 
 
 export abstract class GameObject {
-    private _texture: CanvasRenderingContext2D;
+    protected _texture: CanvasRenderingContext2D;
     public position: Vector2Like;
     public renderOffset: Vector2Like = {x: 0, y: 0};
 
@@ -15,6 +15,10 @@ export abstract class GameObject {
 
     get texture() {return this._texture.canvas}
 
-    protected abstract createTexture(): CanvasRenderingContext2D
+    abstract createTexture(): CanvasRenderingContext2D
+    public updateTexture(): void {
+        this._texture = this.createTexture();
+    }
+
     update(delta: number, level: Level): void {}
 }
