@@ -8,3 +8,4 @@ Start Game:
 v0.1.0 - Add Level, Renderer & GameObjects with Texture  
 v0.1.1 - Add simple Movement and Physics for Pacman
 v0.1.2 - Loading Levels dynamically
+v0.1.3 - Better Level loading
