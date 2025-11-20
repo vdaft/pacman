@@ -4,6 +4,7 @@ import {Vector2Like} from "./types";
 import {Pacman} from "./gameobjects/Pacman";
 import {Ghost, StandardAI} from "./gameobjects/Ghost";
 import {SwipeDetector} from "./swipe";
+import {DEFAULT_URL} from "../../shared/config";
 
 let lastTime = performance.now();
 let delta = 0
@@ -17,7 +18,7 @@ export class Game {
     private running: boolean = false;
     level!: Level;
 
-    constructor(public ctx: CanvasRenderingContext2D) {
+    constructor(public ctx: CanvasRenderingContext2D, private difficulty = 1) {
         this.renderer = new Renderer(ctx);
     }
 
@@ -30,10 +31,11 @@ export class Game {
         await pacman.initTexture()
         this.level.addObject(pacman)
 
-        const ghost = new Ghost({x: 5, y: 5}, StandardAI)
+        const ghost = new Ghost({x: 5, y: 3},"/assets/ghosts/refr.png", StandardAI)
         await ghost.initTexture()
         this.level.addObject(ghost)
 
+        // TODO: Add Ghosts, change Textures to available Ghosts, scale with Difficulty
 
         document.addEventListener("keydown", (e: KeyboardEvent) => {
             if (e.key === "ArrowUp") {
@@ -63,6 +65,16 @@ export class Game {
 
     loop() {
         if (!this.running) return;
+
+        const pacman = this.level.objects.find(o => o instanceof Pacman)
+        const ghosts_touching_pm = this.level.objects.filter(o => {
+            return pacman && pacman.position && (o instanceof Ghost) && (o.position.x === pacman?.position.x && o.position.y === pacman?.position.y)
+        })
+
+        if (ghosts_touching_pm.length > 0) {
+            this.stop()
+            return window.location.href = `${DEFAULT_URL}/menu`
+        }
 
         const currentTime = performance.now();
         delta += (currentTime - lastTime) / 1000;

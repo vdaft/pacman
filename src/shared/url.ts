@@ -1,1 +1,0 @@
-export const DEFAULT_URL = "http://192.168.178.21:5173";

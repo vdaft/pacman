@@ -52,25 +52,30 @@ export class Ghost extends GameObject {
 
     behavior?: (level: Level, pacman: Pacman) => Vector2Like | undefined;
 
-    constructor(position: Vector2Like, behavior: (level: Level, pacman: Pacman) => Vector2Like | undefined = NoAI) {
+    constructor(
+        position: Vector2Like,
+        public imgSrc: string,
+        behavior: (level: Level, pacman: Pacman) => Vector2Like | undefined = NoAI
+    ) {
         super(position);
         this.behavior = behavior.bind(this);
     }
 
     async createTexture(): Promise<ImageBitmap> {
-        const canvas = document.createElement('canvas');
+        if (!this.imgSrc) throw new Error("Ghost has no image source");
 
-        canvas.width = Game.TILE_SIZE;
-        canvas.height = Game.TILE_SIZE;
+        const img = new Image();
+        img.src = this.imgSrc;
+        await img.decode(); // Bild laden
 
-        const ctx = canvas.getContext('2d');
-        if (!ctx) throw new Error('Canvas not supported');
-
-        ctx.fillStyle = '#f00';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        return await createImageBitmap(canvas);
+        // Zielgröße = Game.TILE_SIZE
+        return await createImageBitmap(img, {
+            resizeWidth: Game.TILE_SIZE,
+            resizeHeight: Game.TILE_SIZE,
+            resizeQuality: "high" // optional: "pixelated" für retro-Look
+        });
     }
+
 
     update(delta: number, level: Level) {
         const isBlocked = (() => {
