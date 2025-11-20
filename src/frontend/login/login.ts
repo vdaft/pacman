@@ -1,4 +1,4 @@
-import {DEFAULT_URL} from "../../shared/url";
+import {DEFAULT_URL} from "../../shared/config";
 
 async function start_oauth(): Promise<void> {
     console.log("Requesting Access!")

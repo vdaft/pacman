@@ -3,7 +3,7 @@ import path from "node:path";
 import * as fs from "node:fs";
 import {LevelData} from "../shared/types";
 import dotenv from "dotenv";
-import {DEFAULT_URL} from "../shared/url";
+import {DEFAULT_URL, USABLE_GHOSTS} from "../shared/config";
 
 dotenv.config();
 
@@ -60,11 +60,58 @@ export class Server {
                 res.json({error: "Username is required!"})
             }
 
-            console.log(`${userName} logged in!`)
+            console.log(`${userName} (${userId}) logged in!`)
 
             res.cookie("userId", req.query.userId as string);
             res.redirect(`${DEFAULT_URL}/`)
         })
+
+
+        {
+            const router = express.Router();
+            router.get("/:id/teachers", async (req: express.Request, res: express.Response) => {
+                const requestedUserId = req.params.id;
+                const apiKey = process.env.HTLGO_API_KEY;
+
+                const url = `https://pe9013.schuelerprojekte.online/api/v1/inventory?requestedUserId=${requestedUserId}`;
+
+                const data = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+
+                if (!data.ok) return res.json({error: "Invalid Request"})
+
+                //const parsedData = ((await data.json()).items! as any[]).map((o) => (o.slug as string)).filter(slug => slug in USABLE_GHOSTS);
+                const parsedData = USABLE_GHOSTS
+                console.log(parsedData);
+
+                res.json(parsedData);
+            })
+
+            router.get("/:id/name", async (req: express.Request, res: express.Response) => {
+                const url = `https://pe9012.schuelerprojekte.online//api/public/user/name/${req.params.id}`
+
+                const data = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${process.env.SJ_API_KEY}`
+                    }
+                })
+
+                const userName = (await data.json()).value
+                if (!userName) {
+                    return res.json({error: "Username is required!"})
+                }
+
+                res.json({value: userName})
+            })
+
+            this.app.use("/api/users", router)
+        }
 
         this.app.listen(Server.PORT, () => {
             console.log(`Server runs on ${DEFAULT_URL}`);
