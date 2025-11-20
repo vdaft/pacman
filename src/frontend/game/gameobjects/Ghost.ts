@@ -2,7 +2,7 @@ import {GameObject} from "./GameObject";
 import {Game} from "../Game";
 
 export class Ghost extends GameObject {
-    createTexture(): CanvasRenderingContext2D {
+    async createTexture(): Promise<ImageBitmap> {
         const canvas = document.createElement('canvas');
 
         canvas.width = Game.TILE_SIZE;
@@ -14,6 +14,6 @@ export class Ghost extends GameObject {
         ctx.fillStyle = '#f00';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        return ctx;
+        return await createImageBitmap(canvas);
     }
 }

@@ -8,7 +8,7 @@ export class Pacman extends GameObject {
     direction: Vector2Like = {x: 0, y: 1};
     bufferedDirection: Vector2Like = {x: 0, y: 1};
 
-    createTexture(): CanvasRenderingContext2D {
+    async createTexture(): Promise<ImageBitmap> {
         const canvas = document.createElement('canvas');
 
         canvas.width = Game.TILE_SIZE;
@@ -20,7 +20,7 @@ export class Pacman extends GameObject {
         ctx.fillStyle = '#ff0';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        return ctx;
+        return await createImageBitmap(canvas);
     }
 
     update(delta: number, level: Level): void {

@@ -24,6 +24,12 @@ export class Server {
             res.json({layout, key})
         })
 
+        this.app.post("/api/access", (req: express.Request, res: express.Response) => {
+            console.log("Access requested!");
+
+            res.json({success: "Access requested!"})
+        })
+
         this.app.listen(Server.PORT, () => {
             console.log(`Server runs on http://localhost:${Server.PORT}`);
         });

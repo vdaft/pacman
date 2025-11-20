@@ -1,7 +1,7 @@
 import {Vector2Like} from "./types";
 import {GameObject} from "./gameobjects/GameObject";
 import {Wall} from "./gameobjects/Wall";
-import {LevelData} from "../shared/types";
+import {LevelData} from "../../shared/types";
 
 
 
@@ -40,7 +40,7 @@ export class Level {
                     switch (key[char].type) {
                         case "wall":
                             const obj = new Wall({x, y}, key[char].args.color)
-                            obj.updateTexture()
+                            obj.initTexture()
 
                             ret.addObject(obj)
                             console.log("wall created", key[char].args.color);

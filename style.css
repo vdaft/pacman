@@ -1,5 +1,6 @@
 html, body {
     margin: 0;
+    padding: 0;
     height: 100vh;
     width: 100vw;
     overflow: hidden;
@@ -16,4 +17,5 @@ canvas {
     object-fit: contain;
     display: block;
     image-rendering: pixelated;
+    touch-action: none;
 }

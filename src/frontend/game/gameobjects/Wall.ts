@@ -7,21 +7,16 @@ export class Wall extends GameObject {
         super(position);
     }
 
-    createTexture(): CanvasRenderingContext2D {
+    async createTexture(): Promise<ImageBitmap> {
         const canvas = document.createElement('canvas');
         canvas.width = Game.TILE_SIZE;
         canvas.height = Game.TILE_SIZE;
 
-        console.log(Game.TILE_SIZE);
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-            throw new Error('Failed to get 2D rendering context');
-        }
-
+        const ctx = canvas.getContext('2d')!;
         ctx.fillStyle = this.color;
         ctx.fillRect(0, 0, Game.TILE_SIZE, Game.TILE_SIZE);
 
-        return ctx;
+        return await createImageBitmap(canvas);
     }
+
 }

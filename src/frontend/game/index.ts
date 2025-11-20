@@ -7,8 +7,8 @@ async function main() {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("No Context provided");
 
-    canvas.width = 900;
-    canvas.height = 1600;
+    canvas.width = 900 / 2;
+    canvas.height = 1600 / 2;
 
     const game = new Game(ctx);
     await game.init();

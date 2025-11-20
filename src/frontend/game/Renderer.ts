@@ -17,6 +17,8 @@ export class Renderer {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (const gameObject of level.objects) {
+            if (!gameObject.texture) continue;
+
             this.ctx.drawImage(gameObject.texture,
                 gameObject.position.x * Game.TILE_SIZE
                 + gameObject.renderOffset.x * Game.TILE_SIZE,

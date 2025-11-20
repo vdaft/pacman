@@ -3,12 +3,13 @@ import {Level} from "./Level";
 import {Vector2Like} from "./types";
 import {Pacman} from "./gameobjects/Pacman";
 import {Ghost} from "./gameobjects/Ghost";
+import {SwipeDetector} from "./swipe";
 
 let lastTime = performance.now();
 let delta = 0
 
 export class Game {
-    static TILE_SIZE = 50;
+    static TILE_SIZE = 50 / 2;
     static LEVEL_SIZE: Vector2Like = {x: 9 * 2, y: 16 * 2}
 
     fps: number = 60;
@@ -26,9 +27,11 @@ export class Game {
         this.level = Level.parseFromJson(data, Game.LEVEL_SIZE)
 
         const pacman = new Pacman({x: 5, y: 5})
+        await pacman.initTexture()
         this.level.addObject(pacman)
 
         const ghost = new Ghost({x: 5, y: 5})
+        await ghost.initTexture()
         this.level.addObject(ghost)
 
 
@@ -43,6 +46,19 @@ export class Game {
                 pacman.bufferedDirection = {x: -1, y: 0}
             }
         })
+
+        const detector = new SwipeDetector(this.renderer.canvas, {minDistance: 40, flingVelocity: 0.3})
+
+        detector.onSwipe = (ev) => {
+            // Beispiel-Mapping: einfache Aktionen
+            if (ev.type === 'swipe' || ev.type === 'fling') {
+                // Bewegung oder Dash in Richtung
+                if (ev.direction === 'left') pacman.bufferedDirection = {x: -1, y: 0}
+                if (ev.direction === 'right') pacman.bufferedDirection = {x: 1, y: 0}
+                if (ev.direction === 'up') pacman.bufferedDirection = {x: 0, y: -1}
+                if (ev.direction === 'down') pacman.bufferedDirection = {x: 0, y: 1}
+            }
+        };
     }
 
     loop() {

@@ -7,9 +7,10 @@
   "scripts": {
     "build": "tsc",
     "dev:frontend": "vite",
+    "host:frontend": "vite --host",
     "dev:backend": "tsx src/backend/index",
     "dev": "concurrently --raw -n SERVER,VITE \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "host": "vite --host"
+    "host": "concurrently --raw -n SERVER,VITE \"npm run dev:backend\" \"npm run host:frontend\""
   },
   "devDependencies": {
     "@types/express": "^5.0.5",
