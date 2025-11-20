@@ -2,7 +2,7 @@ import {Renderer} from "./Renderer";
 import {Level} from "./Level";
 import {Vector2Like} from "./types";
 import {Pacman} from "./gameobjects/Pacman";
-import {Ghost} from "./gameobjects/Ghost";
+import {Ghost, StandardAI} from "./gameobjects/Ghost";
 import {SwipeDetector} from "./swipe";
 
 let lastTime = performance.now();
@@ -30,7 +30,7 @@ export class Game {
         await pacman.initTexture()
         this.level.addObject(pacman)
 
-        const ghost = new Ghost({x: 5, y: 5})
+        const ghost = new Ghost({x: 5, y: 5}, StandardAI)
         await ghost.initTexture()
         this.level.addObject(ghost)
 
