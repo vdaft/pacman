@@ -2,6 +2,7 @@ import {GameObject} from "./GameObject";
 import {Game} from "../Game";
 import {Vector2Like} from "../types";
 import {Level} from "../Level";
+import {Wall} from "./Wall";
 
 export class Pacman extends GameObject {
     timeUntilNextMove:number = 1
@@ -27,9 +28,7 @@ export class Pacman extends GameObject {
         const isBlocked = (() => {
             const gameObject = level.getGameObjectAt(this.position.x + this.direction.x, this.position.y + this.direction.y)
 
-            if (gameObject instanceof Pacman) return false;
-            return gameObject;
-
+            return gameObject instanceof Wall;
         })()
 
         if (isBlocked) {

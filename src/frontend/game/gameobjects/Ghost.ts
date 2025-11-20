@@ -5,37 +5,54 @@ import {Vector2Like} from "../types";
 import {Pacman} from "./Pacman";
 import {Wall} from "./Wall";
 
-export const NoAI = () => {return {x: 0, y: 0};};
-export const StandardAI = (level: Level, pacman: Pacman) => {
-    if (!this) return;
-    if (!((this as any) instanceof Ghost)) return;
-
+export function NoAI(this: Ghost, level: Level, pacman: Pacman) {return {x: 0, y: 0}}
+export function StandardAI(this: Ghost, level: Level, pacman: Pacman) {
     const directions: Record<string, Vector2Like> = {
-        "right": { x: 1,  y: 0  },
-        "left":  { x: -1, y: 0  },
-        "up":    { x: 0,  y: -1 },
-        "down":  { x: 0,  y: 1  }
+        right: { x: 1 , y: 0  },
+        left:  { x: -1, y: 0  },
+        up:    { x: 0 , y: -1 },
+        down:  { x: 0 , y: 1  },
     }
 
-    for (const dirKey of Object.keys(directions)) {
-        const dir = directions[dirKey]
+    const reverse = {x: -this.direction.x, y: -this.direction.y}
 
-        const go = level.getGameObjectAt(pacman.position.x + dir.x, pacman.position.y + dir.y)
-        if (!(go instanceof Wall)) {
-            (this! as Pacman).direction = dir;
+    const movement = {
+        direction: reverse,
+        dist: 1000
+    }
+
+    for (const key of Object.keys(directions)) {
+        const dir = directions[key]
+        if (dir.x === reverse.x && dir.y === reverse.y) continue;
+
+        const rx = Math.abs(this.position.x + directions[key].x)
+        const ry = Math.abs(this.position.y + directions[key].y)
+
+        if (level.getGameObjectAt(rx, ry) instanceof Wall) continue;
+
+        const dx = rx - pacman.position.x;
+        const dy = ry - pacman.position.y;
+
+        const dist = Math.sqrt(dx * dx + dy * dy)
+
+        if (dist < movement.dist) {
+            movement.dist = dist;
+            movement.direction = dir;
         }
     }
+
+    return movement.direction;
 }
+
 
 
 export class Ghost extends GameObject {
     direction: Vector2Like = {x: 0, y: 1};
-    bufferedDirection: Vector2Like = {x: 0, y: 1};
     timeUntilNextMove: number = 10
 
-    behavior?: (level: Level, pacman: Pacman) => Vector2Like;
+    behavior?: (level: Level, pacman: Pacman) => Vector2Like | undefined;
 
-    constructor(position: Vector2Like, behavior: (level: Level, pacman: Pacman) => Vector2Like = NoAI) {
+    constructor(position: Vector2Like, behavior: (level: Level, pacman: Pacman) => Vector2Like | undefined = NoAI) {
         super(position);
         this.behavior = behavior.bind(this);
     }
@@ -59,36 +76,15 @@ export class Ghost extends GameObject {
         const isBlocked = (() => {
             const gameObject = level.getGameObjectAt(this.position.x + this.direction.x, this.position.y + this.direction.y)
 
-            if (gameObject instanceof Ghost) return false;
-            return gameObject;
-
+            return gameObject instanceof Wall;
         })()
 
         if (isBlocked) {
             this.renderOffset.x = 0;
             this.renderOffset.y = 0;
 
-            const pacman = level.objects.find(o => o instanceof Pacman)
-            if (this.behavior && pacman) {
-                this.direction = this.behavior(level, pacman);
-            }
-
             this.timeUntilNextMove = 1;
             return;
-        }
-
-        if (
-            this.bufferedDirection.x !== 0 && (this.direction.x * -1 === this.bufferedDirection.x) ||
-            this.bufferedDirection.y !== 0 && (this.direction.y * -1 === this.bufferedDirection.y)
-        ) {
-            this.position.x += this.direction.x;
-            this.position.y += this.direction.y;
-
-
-            this.direction = this.bufferedDirection;
-
-
-            this.timeUntilNextMove = 1- this.timeUntilNextMove;
         }
 
         if (this.timeUntilNextMove <= 0) {
@@ -97,13 +93,9 @@ export class Ghost extends GameObject {
             this.position.x += this.direction.x;
             this.position.y += this.direction.y;
 
-            if (!(() => {
-                const gameObject = level.getGameObjectAt(this.position.x + this.bufferedDirection.x, this.position.y + this.bufferedDirection.y)
-
-                if (gameObject instanceof Ghost) return false;
-                return gameObject;
-            })()) {
-                this.direction = this.bufferedDirection;
+            const pacman = level.objects.find(o => o instanceof Pacman)
+            if (this.behavior && pacman) {
+                this.direction = this.behavior(level, pacman) ?? {x: 0, y: 0};
             }
 
             this.timeUntilNextMove = 1;
