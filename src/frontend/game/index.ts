@@ -1,6 +1,14 @@
 import { Game } from "./Game";
+import {DEFAULT_URL} from "../../shared/url";
 
 async function main() {
+    console.log(document.cookie)
+
+    if (!document.cookie.trim().split("=")[1]) {
+        window.location.href = `${DEFAULT_URL}/login`;
+    }
+
+
     const canvas = document.getElementById("pacman") as HTMLCanvasElement;
     if (!canvas) throw new Error("Can't create pacman");
 
