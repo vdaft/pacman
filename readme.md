@@ -3,6 +3,9 @@
 Start Game:  
 ```npm run dev```
 
+Host public:
+```npm run host```
+
 # Versions
 
 v0.1.0 - Add Level, Renderer & GameObjects with Texture  
@@ -16,3 +19,4 @@ v0.1.6 - Implemented StandardAI
 v0.2.0 - Textures, menu, difficulty selector  
 
 v0.3.0 - Add Stars, add win-condition  
+v0.3.1 - readme.md
