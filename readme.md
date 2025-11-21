@@ -14,3 +14,5 @@ v0.1.5 - Auth complete
 v0.1.6 - Implemented StandardAI  
 
 v0.2.0 - Textures, menu, difficulty selector  
+
+v0.3.0 - Add Stars, add win-condition  
