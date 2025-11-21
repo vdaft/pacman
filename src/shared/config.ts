@@ -1,4 +1,4 @@
-export const DEFAULT_URL = "/";
+export const DEFAULT_URL = "https://pe9015.schuelerprojekte.online";
 
 export const USABLE_GHOSTS = [
     "buch",
