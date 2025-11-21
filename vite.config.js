@@ -4,7 +4,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'pe9015.schuelerprojekte.online',
+                target: 'http://localhost:3000',
                 changeOrigin: true,
                 secure: true,
             }
