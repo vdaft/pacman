@@ -56,6 +56,7 @@ export class Server {
             })
 
             const userName = (await data.json()).value
+            console.log(userName)
             if (!userName) {
                 res.json({error: "Username is required!"})
             }
