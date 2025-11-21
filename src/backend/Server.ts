@@ -110,6 +110,31 @@ export class Server {
                 res.json({value: userName})
             })
 
+            router.get("/:id/reward", async (req: express.Request, res: express.Response) => {
+                const id = req.params.id;
+                const points = req.query.points
+
+                if (!id || !points) {
+                    return res.json({error: "Invalid Request"})
+                }
+
+                const x = await fetch("https://pe9012.schuelerprojekte.online/api/public/user/deposit", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${process.env.SJ_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        userId: id,
+                        points: `${points}`
+                    })
+                });
+
+                const data = await x.text();
+                console.log(`Added ${points} points to ${id}`);
+
+                res.send(data)
+            })
+
             this.app.use("/api/users", router)
         }
 

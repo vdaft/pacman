@@ -2,11 +2,13 @@ import {Vector2Like} from "./types";
 import {GameObject} from "./gameobjects/GameObject";
 import {Wall} from "./gameobjects/Wall";
 import {LevelData} from "../../shared/types";
+import {Star} from "./gameobjects/Star";
 
 
 
 export class Level {
     private _objects: GameObject[] = [];
+    public toRemove: GameObject[] = [];
     maxSize: Vector2Like = {x: 10, y: 10};
 
     constructor() {}
@@ -15,14 +17,20 @@ export class Level {
         return this._objects;
     }
 
+    set objects(objects: GameObject[]) {
+        this._objects = objects;
+    }
+
     getGameObjectAt(x: number, y: number): GameObject | undefined {
         return this.objects.find(o => o.position.x === x && o.position.y === y);
     }
 
     addObject(obj: GameObject) {
-        if (obj.position.x > this.maxSize.x || obj.position.y > this.maxSize.y) return;
-
         this.objects.push(obj);
+    }
+
+    removeObject(obj: GameObject) {
+        this.toRemove.push(obj)
     }
 
     static parseFromJson(json: LevelData, size: Vector2Like): Level {
@@ -39,11 +47,19 @@ export class Level {
                 if (key[char] !== undefined) {
                     switch (key[char].type) {
                         case "wall":
-                            const obj = new Wall({x, y}, key[char].args.color)
-                            obj.initTexture()
+                            const wall = new Wall({x, y}, key[char].args.color)
+                            wall.initTexture()
 
-                            ret.addObject(obj)
+                            ret.addObject(wall)
                             console.log("wall created", key[char].args.color);
+                            break;
+                        case "star":
+                            const star = new Star({x, y});
+                            star.initTexture()
+
+                            ret.addObject(star)
+                            console.log("star created");
+                            break;
                     }
                 }
             }

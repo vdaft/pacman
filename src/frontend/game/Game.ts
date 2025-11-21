@@ -5,6 +5,7 @@ import {Pacman} from "./gameobjects/Pacman";
 import {Ghost, StandardAI} from "./gameobjects/Ghost";
 import {SwipeDetector} from "./swipe";
 import {DEFAULT_URL} from "../../shared/config";
+import {Star} from "./gameobjects/Star";
 
 let lastTime = performance.now();
 let delta = 0
@@ -18,8 +19,13 @@ export class Game {
     private running: boolean = false;
     level!: Level;
 
-    constructor(public ctx: CanvasRenderingContext2D, private difficulty = 1) {
+    ghostsLeft;
+    spawnInterval = 10000
+    lastGhostSpawn = 0
+
+    constructor(public ctx: CanvasRenderingContext2D, private userId: string, private availableGhosts: string[], private difficulty = 1) {
         this.renderer = new Renderer(ctx);
+        this.ghostsLeft = this.difficulty;
     }
 
     async init() {
@@ -30,10 +36,6 @@ export class Game {
         const pacman = new Pacman({x: 5, y: 5})
         await pacman.initTexture()
         this.level.addObject(pacman)
-
-        const ghost = new Ghost({x: 5, y: 3},"/assets/ghosts/refr.png", StandardAI)
-        await ghost.initTexture()
-        this.level.addObject(ghost)
 
         // TODO: Add Ghosts, change Textures to available Ghosts, scale with Difficulty
 
@@ -71,9 +73,36 @@ export class Game {
             return pacman && pacman.position && (o instanceof Ghost) && (o.position.x === pacman?.position.x && o.position.y === pacman?.position.y)
         })
 
+        if (Date.now() > this.lastGhostSpawn + this.spawnInterval && this.ghostsLeft > 0) {
+            const ghostType = this.availableGhosts.pop() ?? "doel";
+            const ghost = new Ghost({x: 5, y: 3}, `/assets/ghosts/${ghostType}.png`, StandardAI)
+
+            ghost.initTexture().then(() => this.level.addObject(ghost))
+
+            this.ghostsLeft--;
+            this.lastGhostSpawn = Date.now()
+
+            console.log(`ghost spawned, ${this.ghostsLeft} left.`)
+        }
+
         if (ghosts_touching_pm.length > 0) {
             this.stop()
             return window.location.href = `${DEFAULT_URL}/menu`
+        }
+
+        if (this.level.toRemove.length > 0) {
+            this.level.objects = this.level.objects.filter(
+                o => !this.level.toRemove.includes(o)
+            );
+
+            if (this.level.objects.filter(o => o instanceof Star).length === 0) {
+                this.stop()
+                fetch(`api/users/${this.userId}/reward?points=${this.difficulty * 20}`)
+                    .then(() => {
+                        alert("You won!")
+                        window.location.href = `${DEFAULT_URL}/menu`
+                    })
+            }
         }
 
         const currentTime = performance.now();

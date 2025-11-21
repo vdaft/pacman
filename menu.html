@@ -70,29 +70,71 @@
 </head>
 <body>
 
-<h1>Pacman Clone</h1>
+<h1>Spooky Teacher</h1>
 
 <label for="difficulty">Schwierigkeitsgrad: <span id="difficultyValue">5</span></label>
 <input type="range" id="difficulty" min="1" max="10" value="5">
 
 <button id="startBtn">Spiel starten</button>
 
-<script>
-    const startBtn = document.getElementById('startBtn');
-    const difficultySelect = document.getElementById('difficulty');
-    const difficultyValue = document.getElementById('difficultyValue');
+<script type="module">
+    // -------- COOKIE LESEN ----------
+    function getCookie(name) {
+        return document.cookie
+            .split("; ")
+            .find(row => row.startsWith(name + "="))
+            ?.split("=")[1];
+    }
 
-    // Slider Wert anzeigen
-    difficultySelect.addEventListener('input', () => {
+    const userId = getCookie("userId");
+
+    if (!userId) {
+        window.location.href = "/login";
+    }
+
+    // -------- MAX DIFFICULTY LADEN ----------
+    let maxDifficulty = 1;
+
+    try {
+        const res = await fetch(`/api/users/${userId}/teachers`);
+        const data = await res.json();
+
+        console.log(data);
+
+        if (!Array.isArray(data)) {
+            throw new Error("API gibt kein items[] zurück");
+        }
+
+        maxDifficulty = data.length;
+    } catch (e) {
+        alert("Fehler beim Laden der Daten vom Server.");
+        console.error(e);
+    }
+
+    // -------- UI ELEMENTE ----------
+    const startBtn = document.getElementById("startBtn");
+    const difficultySelect = document.getElementById("difficulty");
+    const difficultyValue = document.getElementById("difficultyValue");
+
+    difficultySelect.addEventListener("input", () => {
         difficultyValue.textContent = difficultySelect.value;
     });
 
-    startBtn.addEventListener('click', () => {
-        const difficulty = difficultySelect.value;
-        // Weiterleitung auf / mit Schwierigkeit als URL-Parameter
+    // -------- START BUTTON LOGIK ----------
+    startBtn.addEventListener("click", () => {
+        const difficulty = Number(difficultySelect.value);
+
+        if (difficulty > maxDifficulty) {
+            alert(
+                `Du darfst nur bis Schwierigkeit ${maxDifficulty} spielen!`
+            );
+            return;
+        }
+
         window.location.href = `/?difficulty=${difficulty}`;
     });
 </script>
+
 
 </body>
 </html>

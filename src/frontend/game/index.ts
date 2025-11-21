@@ -1,6 +1,16 @@
 import { Game } from "./Game";
 import {DEFAULT_URL} from "../../shared/config";
 
+
+function shuffle(array: any[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+
 async function main() {
     console.log(document.cookie)
 
@@ -8,10 +18,20 @@ async function main() {
         window.location.href = `${DEFAULT_URL}/login`;
     }
 
-    const difficulty = new URL(window.location.href).searchParams.get("difficulty");
-    if (!difficulty) window.location.href = `${DEFAULT_URL}/menu`;
+    const userId = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("userId" + "="))
+        ?.split("=")[1];
 
-    // TODO: Difficulty, lookup Ghosts
+    if (!userId) {
+        return window.location.href = `${DEFAULT_URL}/login`;
+    }
+
+    const difficulty = new URL(window.location.href).searchParams.get("difficulty");
+    if (!difficulty) return window.location.href = `${DEFAULT_URL}/menu`;
+
+    const availableGhosts = (await (await fetch(`api/users/${userId}/teachers`)).json())
+    console.log(availableGhosts)
 
     const canvas = document.getElementById("pacman") as HTMLCanvasElement;
     if (!canvas) throw new Error("Can't create pacman");
@@ -22,7 +42,7 @@ async function main() {
     canvas.width = 900 / 2;
     canvas.height = 1600 / 2;
 
-    const game = new Game(ctx);
+    const game = new Game(ctx, userId, shuffle(availableGhosts), Number.parseInt(difficulty));
     await game.init();
     game.start();
 }
