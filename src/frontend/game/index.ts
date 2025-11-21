@@ -15,7 +15,7 @@ async function main() {
     console.log(document.cookie)
 
     alert(`${DEFAULT_URL}/login`)
-
+    console.log(`${DEFAULT_URL}/login`)
 
     if (!document.cookie.trim().split("=")[1]) {
         window.location.href = `${DEFAULT_URL}/login`;
