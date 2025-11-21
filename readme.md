@@ -3,6 +3,9 @@
 Start Game:  
 ```npm run dev```
 
+Host public:
+```npm run host```
+
 # Versions
 
 v0.1.0 - Add Level, Renderer & GameObjects with Texture  
