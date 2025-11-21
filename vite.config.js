@@ -10,7 +10,7 @@ export default defineConfig({
             }
         },
         host: true,
-        allowedOrigins: ['localhost', 'pe9015.schuelerprojekte.online']
-
+        allowedOrigins: ['localhost', 'pe9015.schuelerprojekte.online'],
+        allowedHosts: ['localhost', 'pe9015.schuelerprojekte.online']
     }
 });
