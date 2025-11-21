@@ -85,8 +85,8 @@ export class Server {
 
                 if (!data.ok) return res.json({error: "Invalid Request"})
 
-                //const parsedData = ((await data.json()).items! as any[]).map((o) => (o.slug as string)).filter(slug => slug in USABLE_GHOSTS);
-                const parsedData = USABLE_GHOSTS
+                const parsedData = ((await data.json()).items! as any[]).map((o) => (o.slug as string)).filter(slug => slug in USABLE_GHOSTS);
+
                 console.log(parsedData);
 
                 res.json(parsedData);
