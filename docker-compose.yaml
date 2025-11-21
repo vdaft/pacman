@@ -2,4 +2,4 @@ services:
   app:
     build: .
     ports:
-      - "9015:3000"
+      - "9015:5173"
