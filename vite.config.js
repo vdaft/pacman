@@ -11,5 +11,6 @@ export default defineConfig({
         },
         host: true,
         allowedOrigins: ['http://localhost', 'daft', "pe9015.schuelerprojekte.online"],
+        allowedHosts: ['http://localhost', 'daft', "pe9015.schuelerprojekte.online"]
     }
 });
