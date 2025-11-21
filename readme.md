@@ -20,4 +20,5 @@ v0.2.0 - Textures, menu, difficulty selector
 
 v0.3.0 - Add Stars, add win-condition  
 v0.3.1 - readme.md  
-v0.3.2 - Getting Ghosts now from API
+v0.3.2 - Getting Ghosts now from API  
+v0.3.3 - Docker 

@@ -112,11 +112,13 @@ export class Server {
 
             router.get("/:id/reward", async (req: express.Request, res: express.Response) => {
                 const id = req.params.id;
-                const points = req.query.points
+                const points = (req.query.points as string)
 
                 if (!id || !points) {
                     return res.json({error: "Invalid Request"})
                 }
+
+                if (Number.parseInt(points) > 300) return res.json({error: "Too many points!"})
 
                 const x = await fetch("https://pe9012.schuelerprojekte.online/api/public/user/deposit", {
                     method: "POST",
